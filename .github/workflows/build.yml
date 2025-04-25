@@ -1,0 +1,23 @@
+name: build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: rust:alpine
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.2.2
+      - name: build
+        run: |
+          apk update
+          apk add --no-cache musl-dev
+          cargo build --release
+          mv target/release/fsrt fsrt-alpine
+      - name: Release
+        uses: softprops/action-gh-release@v2.2.2
+        with:
+          files: fsrt-alpine
